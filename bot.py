@@ -3,6 +3,7 @@ import config
 import notificator
 import threading
 import time
+import traceback
 
 from telebot import types
 
@@ -72,6 +73,9 @@ if __name__ == "__main__":
         try:
             bot.polling(none_stop=True)
         except Exception as e:
+            print("except on Main thread\n")
             print(e)
+            traceback.print_exc()
             # повторяем через 15 секунд в случае недоступности сервера Telegram
             time.sleep(15)
+            
