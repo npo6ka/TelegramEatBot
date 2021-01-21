@@ -38,8 +38,8 @@ def add_to_subs(id):
         save_subs()
 
 def remove_subs(id):
-    for i, item in enumerate(notify_subs):
-        if id == notify_subs[i]:
+    for i, sub in enumerate(notify_subs):
+        if id == sub:
             notify_subs.pop(i)
             print("Removed from subs: ", id)
             save_subs()
@@ -49,14 +49,20 @@ def remove_subs(id):
 def check_send_messages():
     load_subs()
 
+    notify_flag = True
+
     while True:
         try:
             if is_food_time(config.NOTIFICATION_TIME_HOUR, config.NOTIFICATION_TIME_MIN):
-                print("ВРЕМЯ писать еду!!!")
-                for sub in notify_subs:
-                    bot.send_message(sub, "Пора писать еду !!!")
+                if notify_flag:
+                    print("ВРЕМЯ писать еду!!!")
+                    for sub in notify_subs:
+                        bot.send_message(sub, "Пора писать еду !!!")
+                    notify_flag = False
+            else:
+                notify_flag = True
             # пауза между проверками, чтобы не загружать процессор
-                time.sleep(59)
+            time.sleep(59)
         except Exception as e:
             print("except on child thread\n")
             print(e)
