@@ -28,9 +28,9 @@ def create_markup(user_id):
 def welcome(message):
     sticker = open('static/homer_sticker.webp', 'rb')
     bot.send_sticker(message.chat.id, sticker)
-    bot.send_message(message.chat.id, 
+    bot.send_message(message.chat.id,
         "Приветсвую тебя, {0.first_name}!\n <b>{1.first_name}</b>,"
-        " бот созданный чтоб накормить тебя, если повезёт.".format(message.from_user, bot.get_me()), 
+        " бот созданный чтоб накормить тебя, если повезёт.".format(message.from_user, bot.get_me()),
         parse_mode='html', reply_markup=create_markup(message.chat.id))
 
 
