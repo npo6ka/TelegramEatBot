@@ -23,10 +23,11 @@ def load_subs():
 
 def is_food_time(hour, min):
     now = datetime.now()
-
+    is_weekend = now.weekday() >= 5
     cur_hour = int(now.strftime("%H"))
     cur_min = int(now.strftime("%M"))
-    return cur_hour == hour and cur_min == min
+
+    return cur_hour == hour and cur_min == min and not is_weekend
 
 def is_sub_exist(id):
     return id in notify_subs
@@ -49,6 +50,7 @@ def remove_subs(id):
 def check_send_messages():
     load_subs()
 
+    # флаг проверки чтобы сообщение не выводилось дважды
     notify_flag = True
 
     while True:
@@ -67,4 +69,3 @@ def check_send_messages():
             print("except on child thread\n")
             print(e)
             traceback.print_exc()
-    
