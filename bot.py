@@ -8,6 +8,7 @@ import notificator
 import menu
 import log
 
+from log import out
 from telebot import types
 from datetime import datetime
 
@@ -62,7 +63,7 @@ def parse_callback_data(data):
 def callback_inline(call):
     try:
         if call.message:
-            log.log("User {0} pressed inline button with data: {1}\n".format(call.message.chat.id, call.data))
+            out("User {0} pressed inline button with data: {1}".format(call.message.chat.id, call.data))
             data = parse_callback_data(call.data)
 
             if 'type' in data and data["type"] == 'categories':
@@ -87,7 +88,7 @@ def callback_inline(call):
 
 @bot.message_handler(commands=['start'])
 def welcome(message):
-    log.log("User {0}, {1} joined to bot\n".format(message.chat.id, message.from_user.first_name))
+    out("User {0}, {1} joined to bot".format(message.chat.id, message.from_user.first_name))
     sticker = open('static/homer_sticker.webp', 'rb')
     bot.send_sticker(message.chat.id, sticker)
     bot.send_message(message.chat.id,
@@ -99,7 +100,7 @@ def welcome(message):
 @bot.message_handler(content_types=['text'])
 def msg_back(message):
     if message.chat.type == 'private':
-        log.log("User {0} send {1}\n".format(message.chat.id, message.text))
+        out("User {0} send {1}".format(message.chat.id, message.text))
         if message.text == 'Текущий список еды':
             bot.send_message(message.chat.id, "Это информация сейчас тебе не нужна")
         elif message.text == 'Заказать еды':
@@ -132,6 +133,7 @@ if __name__ == "__main__":
 
     # инициализируем меню
     menu.load_menu()
+    log.create_log()
 
     # а это включение бота на прием сообщений
     # обернуто в try, потому что если Telegram сервер станет недоступен, возможен крэш

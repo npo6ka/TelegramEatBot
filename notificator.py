@@ -4,6 +4,7 @@ import time
 import json
 import traceback
 
+from log import out
 from datetime import datetime
 from telebot import types
 
@@ -35,14 +36,14 @@ def is_sub_exist(id):
 def add_to_subs(id):
     if not is_sub_exist(id):
         notify_subs.append(id)
-        print("Added new subs: ", id)
+        out(f"Added new subs: {id}")
         save_subs()
 
 def remove_subs(id):
     for i, sub in enumerate(notify_subs):
         if id == sub:
             notify_subs.pop(i)
-            print("Removed from subs: ", id)
+            out(f"Removed from subs: {id}")
             save_subs()
             return
 
@@ -57,8 +58,8 @@ def check_send_messages():
         try:
             if is_food_time(config.NOTIFICATION_TIME_HOUR, config.NOTIFICATION_TIME_MIN):
                 if notify_flag:
-                    print("ВРЕМЯ писать еду!!!")
                     for sub in notify_subs:
+                        out(f"Send notification on {sub}")
                         bot.send_message(sub, "Пора писать еду !!!")
                     notify_flag = False
             else:

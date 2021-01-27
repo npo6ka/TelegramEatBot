@@ -1,16 +1,22 @@
-import time
+import logging
 
-from datetime import datetime
+log = None
 
-def log(outstr):
-    print_to_log("[MSG]: " + outstr)
+def create_log():
+    global log
+
+    logging.basicConfig(handlers=[logging.FileHandler(filename="./cur.log",
+        encoding='utf-8', mode='a+')],
+        format='%(asctime)s [%(levelname)s]: %(message)s',
+        datefmt='%d-%m-%y %H:%M:%S',
+        level=logging.INFO)
+
+    logging.info("Running bot logging")
+    log = logging.getLogger('Bot Log')
+
+
+def out(outstr):
+    log.info(outstr)
 
 def error(outstr):
-    print_to_log("[ERR]: " + outstr)
-
-def print_to_log(outstr):
-    now = datetime.now()
-    time = now.strftime("%d-%m-%y %H:%M:%S ")
-
-    with open("cur.log", "a", encoding="utf8") as log:
-        log.write(time + outstr)
+    log.error(outstr)
