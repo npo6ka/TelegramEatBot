@@ -89,7 +89,7 @@ def callback_inline(call):
 @bot.message_handler(commands=['start'])
 def welcome(message):
     out("User {0}, {1} joined to bot".format(message.chat.id, message.from_user.first_name))
-    sticker = open('static/homer_sticker.webp', 'rb')
+    sticker = open('static/isp_hello_sticker.webp', 'rb')
     bot.send_sticker(message.chat.id, sticker)
     bot.send_message(message.chat.id,
         "Приветсвую тебя, {0.first_name}!\n <b>{1.first_name}</b>,"
