@@ -7,6 +7,7 @@ import config
 import notificator
 import menu
 import log
+import loc
 
 from log import out
 from telebot import types
@@ -15,16 +16,16 @@ from datetime import datetime
 bot = telebot.TeleBot(config.TOKEN, threaded=False)
 
 # keyboard
-def create_markup(user_id):
+def create_main_markup(user_id):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    item1 = types.KeyboardButton('Текущий список еды')
-    item2 = types.KeyboardButton('Заказать еды')
+    item1 = types.KeyboardButton(loc.main_menu_cur_food_list)
+    item2 = types.KeyboardButton(loc.main_menu_req_eat)
     item3 = None
 
     if not notificator.is_sub_exist(user_id):
-        item3 = types.KeyboardButton('Подписаться на уведомления')
+        item3 = types.KeyboardButton(loc.main_menu_sub)
     else:
-        item3 = types.KeyboardButton('Отписаться от уведомлений')
+        item3 = types.KeyboardButton(loc.main_menu_unsub)
     markup.add(item1, item2, item3)
 
     return markup
@@ -92,37 +93,36 @@ def welcome(message):
     sticker = open('static/isp_hello_sticker.webp', 'rb')
     bot.send_sticker(message.chat.id, sticker)
     bot.send_message(message.chat.id,
-        "Приветсвую тебя, {0.first_name}!\n <b>{1.first_name}</b>,"
-        " бот созданный чтоб накормить тебя, если повезёт.".format(message.from_user, bot.get_me()),
-        parse_mode='html', reply_markup=create_markup(message.chat.id))
+        (loc.start_msg).format(message.from_user, bot.get_me()),
+        parse_mode='html', reply_markup=create_main_markup(message.chat.id))
 
 
 @bot.message_handler(content_types=['text'])
 def msg_back(message):
     if message.chat.type == 'private':
         out("User {0} send {1}".format(message.chat.id, message.text))
-        if message.text == 'Текущий список еды':
-            bot.send_message(message.chat.id, "Это информация сейчас тебе не нужна")
-        elif message.text == 'Заказать еды':
-            bot.send_message(message.chat.id, "Выбери категорию:", reply_markup=create_categories_markup())
-        elif message.text == 'Подписаться на уведомления':
+        if message.text == loc.main_menu_cur_food_list:
+            bot.send_message(message.chat.id, loc.main_answer_tmp_error)
+        elif message.text == loc.main_menu_req_eat:
+            bot.send_message(message.chat.id, loc.food_select_cat, reply_markup=create_categories_markup())
+        elif message.text == loc.main_menu_sub:
             if not notificator.is_sub_exist(message.chat.id):
                 notificator.add_to_subs(message.chat.id)
-                bot.send_message(message.chat.id, "Успешно добавлен в подписку",
-                    reply_markup=create_markup(message.chat.id))
+                bot.send_message(message.chat.id, loc.main_answer_sub,
+                    reply_markup=create_main_markup(message.chat.id))
             else:
-                bot.send_message(message.chat.id, "Зачем тебя ещё раз добавлять?",
-                    reply_markup=create_markup(message.chat.id))
-        elif message.text == 'Отписаться от уведомлений':
+                bot.send_message(message.chat.id, loc.main_answer_sub_err,
+                    reply_markup=create_main_markup(message.chat.id))
+        elif message.text == loc.main_menu_unsub:
             if notificator.is_sub_exist(message.chat.id):
                 notificator.remove_subs(message.chat.id)
-                bot.send_message(message.chat.id, "Успешно удалён из подписки",
-                    reply_markup=create_markup(message.chat.id))
+                bot.send_message(message.chat.id, loc.main_answer_unsub,
+                    reply_markup=create_main_markup(message.chat.id))
             else:
-                bot.send_message(message.chat.id, "Тебя же нет в подписчиках",
-                    reply_markup=create_markup(message.chat.id))
+                bot.send_message(message.chat.id, loc.main_answer_unsub_err,
+                    reply_markup=create_main_markup(message.chat.id))
         else:
-            bot.send_message(message.chat.id, "Хз что тебе ответить, на твоё \"{0}\"".format(message.text),
+            bot.send_message(message.chat.id, loc.main_answer_unknown.format(message.text),
                 parse_mode='html')
 
 
