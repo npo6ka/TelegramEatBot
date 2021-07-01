@@ -15,8 +15,11 @@ def create_log():
     log = logging.getLogger('Bot Log')
 
 
-def out(outstr):
-    log.info(outstr)
+def out(outstr, is_print = False):
+    if log:
+        log.info(outstr)
+    if is_print:
+        print(outstr)
 
 def error(outstr):
     log.error(outstr)

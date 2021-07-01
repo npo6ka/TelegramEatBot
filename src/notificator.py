@@ -47,6 +47,18 @@ def remove_subs(id):
             save_subs()
             return
 
+def try_send_msg(user):
+    try:
+        out(f"Send notification on {user}", True)
+        bot.send_message(user, "Пора писать еду !!!")
+    except Exception as e:
+        out(f"Except on child thread by user: {user}\n", True)
+        if (e.result_json['error_code'] == 403):
+            remove_subs(user)
+        else:
+            print(e)
+            traceback.print_exc()
+
 # это функция отправки сообщений по времени
 def check_send_messages():
     load_subs()
@@ -55,18 +67,12 @@ def check_send_messages():
     notify_flag = True
 
     while True:
-        try:
-            if is_food_time(config.NOTIFICATION_TIME_HOUR, config.NOTIFICATION_TIME_MIN):
-                if notify_flag:
-                    for sub in notify_subs:
-                        out(f"Send notification on {sub}")
-                        bot.send_message(sub, "Пора писать еду !!!")
-                    notify_flag = False
-            else:
-                notify_flag = True
-            # пауза между проверками, чтобы не загружать процессор
-            time.sleep(59)
-        except Exception as e:
-            print("except on child thread\n")
-            print(e)
-            traceback.print_exc()
+        if is_food_time(config.NOTIFICATION_TIME_HOUR, config.NOTIFICATION_TIME_MIN):
+            if notify_flag:
+                for sub in list(notify_subs):
+                    try_send_msg(sub)
+                notify_flag = False
+        else:
+            notify_flag = True
+        # пауза между проверками, чтобы не загружать процессор
+        time.sleep(59)
