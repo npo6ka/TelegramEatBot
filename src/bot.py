@@ -127,13 +127,13 @@ def msg_back(message):
 
 
 if __name__ == "__main__":
-    # Запускаем проверку времени в отдельном потоке
-    x = threading.Thread(target=notificator.check_send_messages, args=())
-    x.start()
-
     # инициализируем меню
     menu.load_menu()
     log.create_log()
+
+    # Запускаем проверку времени в отдельном потоке
+    x = threading.Thread(target=notificator.check_send_messages, args=())
+    x.start()
 
     # а это включение бота на прием сообщений
     # обернуто в try, потому что если Telegram сервер станет недоступен, возможен крэш
